@@ -1,0 +1,118 @@
+#!/bin/bash
+
+# Colors
+DRED='\033[1;31m'
+LRED='\033[0;31m'
+WHITE='\033[1;37m'
+GRAY='\033[1;30m'
+NC='\033[0m'
+
+clear
+
+# Intro Screen
+echo -e "${DRED}"
+echo "=========================================="
+echo "             HACKED CHECKER               "
+echo "              Made by ABIR                "
+echo "=========================================="
+echo -e "${NC}"
+
+echo -e "${LRED}[*] Wait for system initialization...${NC}"
+sleep 2
+clear
+
+# Gatekeeper
+echo -e "${DRED}"
+echo "=========================================="
+echo "             HACKED CHECKER               "
+echo "              Made by ABIR                "
+echo "=========================================="
+echo -e "${NC}"
+echo -e "${WHITE}Type ${DRED}'scanner'${WHITE} to enter the tool:${NC}"
+read -p "> " action
+
+if [ "$action" != "scanner" ]; then
+    echo -e "${DRED}[!] Access Denied. Invalid Keyword.${NC}"
+    exit 1
+fi
+
+# Menu Loop
+while true; do
+    clear
+    echo -e "${DRED}"
+    echo "=========================================="
+    echo "             HACKED CHECKER               "
+    echo "              Made by ABIR                "
+    echo "=========================================="
+    echo -e "${NC}"
+    
+    echo -e "${WHITE}[${DRED}01${WHITE}] Check Root Access${NC}"
+    echo -e "${WHITE}[${DRED}02${WHITE}] Scan Open Ports${NC}"
+    echo -e "${WHITE}[${DRED}03${WHITE}] Check Device Admin${NC}"
+    echo -e "${WHITE}[${DRED}04${WHITE}] List Installed Apps${NC}"
+    echo -e "${WHITE}[${DRED}05${WHITE}] Network Connections${NC}"
+    echo -e "${WHITE}[${DRED}00${WHITE}] Exit${NC}"
+    echo -e "${GRAY}------------------------------------------${NC}"
+    
+    read -p "$(echo -e ${DRED}"Scanner@ABIR:~# "${NC})" choice
+
+    case $choice in
+        1|01)
+            echo -e "\n${LRED}[*] Checking for root...${NC}"
+            sleep 1
+            if [ -e /system/app/Superuser.apk ] || [ -e /system/xbin/su ]; then
+                echo -e "${DRED}[!] WARNING: Phone is ROOTED.${NC}"
+            else
+                echo -e "${WHITE}[+] SECURE: No root access found.${NC}"
+            fi
+            read -p "Press Enter to continue..."
+            ;;
+        2|02)
+            echo -e "\n${LRED}[*] Scanning ports (4444, 5555, 31337)...${NC}"
+            sleep 1
+            PORTS=$(netstat -tuln 2>/dev/null | grep -E '4444|5555|31337')
+            if [ ! -z "$PORTS" ]; then
+                echo -e "${DRED}[!] DANGER: Suspicious ports found!${NC}"
+                echo -e "${LRED}$PORTS${NC}"
+            else
+                echo -e "${WHITE}[+] SECURE: No backdoor ports open.${NC}"
+            fi
+            read -p "Press Enter to continue..."
+            ;;
+        3|03)
+            echo -e "\n${LRED}[*] Analyzing Device Admins...${NC}"
+            sleep 1
+            ADMINS=$(dumpsys device_policy 2>/dev/null | grep 'admin=' | cut -d '/' -f 1 | cut -d '.' -f 3)
+            if [ ! -z "$ADMINS" ]; then
+                echo -e "${DRED}[!] Admin Apps Found:${NC}"
+                echo -e "${WHITE}$ADMINS${NC}"
+            else
+                echo -e "${WHITE}[+] SECURE: No admin apps found.${NC}"
+            fi
+            read -p "Press Enter to continue..."
+            ;;
+        4|04)
+            echo -e "\n${LRED}[*] Fetching user apps...${NC}"
+            sleep 1
+            APPS=$(pm list packages -3 2>/dev/null | sed 's/package://g' | head -n 10)
+            echo -e "${WHITE}$APPS${NC}"
+            echo -e "${GRAY}(Showing top 10 apps)${NC}"
+            read -p "Press Enter to continue..."
+            ;;
+        5|05)
+            echo -e "\n${LRED}[*] Analyzing network connections...${NC}"
+            sleep 1
+            CONNS=$(netstat -tun 2>/dev/null | grep ESTABLISHED | wc -l)
+            echo -e "${WHITE}[+] Active Connections: ${DRED}$CONNS${NC}"
+            read -p "Press Enter to continue..."
+            ;;
+        0|00)
+            echo -e "\n${DRED}Exiting Hacked Checker...${NC}"
+            exit 0
+            ;;
+        *)
+            echo -e "\n${DRED}[!] Invalid Option!${NC}"
+            sleep 1
+            ;;
+    esac
+done
